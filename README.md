@@ -9,3 +9,6 @@ A lot has been changed and to be honest I don't quite understand what I did enti
 With this version I did some really huge changes I managed to get maya import to work and worked out the pathlib so that the file can function in py 2.7
 
 I can save files and also if we don't have a folder in the path directory it can create one.
+
+Last version I did was to set up a incremental save so that the code will not write over exsiting files and save up to the latest version.
+
