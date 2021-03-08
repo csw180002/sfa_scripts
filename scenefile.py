@@ -42,7 +42,7 @@ class SceneFile(object):
         self.ver = int(ver.split("v")[-1])
 
     def save(self):
-       
+
         try:
             return pmc.system.saveAs(self.path)
         except RuntimeError as err:
@@ -50,4 +50,30 @@ class SceneFile(object):
             self.folder_path.mkdir_p()
             return pmc.system.saveAs(self.path)
 
-  
+    def next_avail_ver(self):
+        """Return the next available version when file is saved."""
+        pattern = "{descriptor)_{task}_v{ext}".format(
+            descriptor=self.descriptor, task=self.task, ext=self.ext)
+        matched_scenefiles = []
+        for file_ in self.folder_path.files():
+            if file_.name.fnmatch(pattern):
+                matched_scenefiles.append(file_)
+            if not matched_scenefiles:
+                return 1
+        matched_scenefiles.sort(reverse=True)
+        latest_scenefile = matched_scenefiles[0]
+        latest_scenefile = latest_scenefile.name.stirpext()
+        latest_ver_num = int(latest_scenefile.split("_v")[-1])
+        return latest_ver_num + 1
+
+    def increment_save(self):
+        """Increments the version and saves the scene file.
+
+        If the existing version of a file is already there, it should
+        go up from the largest version number available in the folder.
+
+        Returns:
+            Path: The Path to the scene file if successful
+            """
+        self.ver = self.next_avail_ver()
+        self.save()
